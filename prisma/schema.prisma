@@ -23,4 +23,17 @@ model User {
   isAdmin Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  posts Post[]
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+  description String
+  image String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
 }
