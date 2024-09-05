@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ConfigModule } from '@nestjs/config';
 import { PostModule } from './post/post.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PostModule } from './post/post.module';
     CloudinaryModule,
     AuthModule,
     PostModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
