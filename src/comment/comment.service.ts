@@ -28,4 +28,23 @@ export class CommentService {
 
     return comment;
   }
+
+  async deleteComment(commentId: number, userId: number) {
+    const comment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    if (comment && comment.authorId !== userId) {
+      throw new HttpException(
+        'You do not have permission to delete this comment',
+        401,
+      );
+    }
+
+    return await this.prisma.comment.delete({ where: { id: commentId } });
+  }
 }
