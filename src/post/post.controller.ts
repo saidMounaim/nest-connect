@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
   Get,
   NotFoundException,
+  Param,
   ParseFilePipe,
   ParseIntPipe,
   Post,
@@ -26,7 +28,7 @@ export class PostController {
     return this.postService.getAll();
   }
 
-  @Post('posts')
+  @Post('/posts')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   addPost(
@@ -43,5 +45,12 @@ export class PostController {
     const userId: number = req.user.id;
     const data: CreatePostDto = { ...createPostDto, authorId: userId };
     return this.postService.addPost(data, image);
+  }
+
+  @Delete('/post/:postId')
+  @UseGuards(JwtAuthGuard)
+  deletePost(@Param('postId', ParseIntPipe) postId: number, @Req() req: any) {
+    const userId: number = req.user.id;
+    return this.postService.deletePost(postId, userId);
   }
 }

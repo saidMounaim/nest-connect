@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto } from './dto/CreatePost.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -34,5 +34,19 @@ export class PostService {
     };
 
     return await this.prisma.post.create({ data: newPost });
+  }
+
+  async deletePost(postId: number, userId: number) {
+    const post = await this.prisma.post.findUnique({ where: { id: postId } });
+    if (!post) {
+      throw new HttpException('Post not found', 404);
+    }
+    if (post && post.authorId !== userId) {
+      throw new HttpException(
+        'You do not have permission to delete this post',
+        401,
+      );
+    }
+    return await this.prisma.post.delete({ where: { id: postId } });
   }
 }
