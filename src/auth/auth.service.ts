@@ -9,6 +9,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { RegisterUserDto } from './dto/RegisterUser.dto';
+import { UpdatePasswordDto } from './dto/UpdatePassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -62,5 +63,39 @@ export class AuthService {
     });
 
     return newUser;
+  }
+
+  async updatePassword(updatedPasswordDto: UpdatePasswordDto) {
+    const { oldPassword, newPassword, userId } = updatedPasswordDto;
+
+    let user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (oldPassword && !bcrypt.compareSync(oldPassword, user.password)) {
+      throw new UnauthorizedException('Invalid old password');
+    }
+
+    if (oldPassword === newPassword) {
+      throw new HttpException(
+        'New password should not be the same as the old password',
+        401,
+      );
+    }
+
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+
+    user = await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return user;
   }
 }
