@@ -1,6 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddCommentDto } from './dto/AddComment.dto';
+import { UpdateCommentDto } from './dto/UpdateComment.dto';
 
 @Injectable()
 export class CommentService {
@@ -24,6 +25,34 @@ export class CommentService {
 
     const comment = await this.prisma.comment.create({
       data: { description, authorId, postId },
+    });
+
+    return comment;
+  }
+
+  async updateComment(updateCommentDto: UpdateCommentDto, userId: number) {
+    let comment = await this.prisma.comment.findUnique({
+      where: { id: updateCommentDto.id },
+    });
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    if (comment.authorId !== userId) {
+      throw new HttpException(
+        'You do not have permission to update this comment',
+        401,
+      );
+    }
+
+    comment = await this.prisma.comment.update({
+      where: {
+        id: updateCommentDto.id,
+      },
+      data: {
+        description: updateCommentDto.description,
+      },
     });
 
     return comment;

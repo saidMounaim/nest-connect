@@ -8,10 +8,12 @@ import {
   Param,
   ParseIntPipe,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { AddCommentDto } from './dto/AddComment.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateCommentDto } from './dto/UpdateComment.dto';
 
 @Controller('')
 export class CommentController {
@@ -32,6 +34,19 @@ export class CommentController {
     const authorId = req.user.id;
     const data: AddCommentDto = { ...addCommentDto, authorId, postId };
     return this.commentSerivce.addComment(data);
+  }
+
+  @Put('/comment/:commentId')
+  @UseGuards(JwtAuthGuard)
+  updateComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Body()
+    updateCommentDto: UpdateCommentDto,
+    @Req() req: any,
+  ) {
+    const userId = req.user.id;
+    const data: UpdateCommentDto = { ...updateCommentDto, id: commentId };
+    return this.commentSerivce.updateComment(data, userId);
   }
 
   @Delete('/comment/:commentId')
