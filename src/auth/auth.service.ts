@@ -2,6 +2,7 @@ import {
   HttpException,
   Injectable,
   NotFoundException,
+  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -96,6 +97,22 @@ export class AuthService {
       },
     });
 
+    return user;
+  }
+
+  async getLoggedIn(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('Unauthorized');
+    }
     return user;
   }
 }

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   FileTypeValidator,
+  Get,
   ParseFilePipe,
   Post,
   Put,
@@ -49,5 +50,12 @@ export class AuthController {
     const userId = req.user.id;
     const data: UpdatePasswordDto = { ...updatedPasswordDto, userId };
     return this.authService.updatePassword(data);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getLoggedIn(@Req() req: any) {
+    const userId = req.user.id;
+    return this.authService.getLoggedIn(userId);
   }
 }
