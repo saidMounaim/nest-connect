@@ -1,5 +1,7 @@
 import {
   Controller,
+  Delete,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -18,5 +20,17 @@ export class LikeController {
   likePost(@Param('postId', ParseIntPipe) postId: number, @Req() req: any) {
     const userId = req.user.id;
     return this.likeService.likePost(userId, postId);
+  }
+
+  @Delete('/post/:postId/unlike')
+  @UseGuards(JwtAuthGuard)
+  unlikePost(@Param('postId', ParseIntPipe) postId: number, @Req() req: any) {
+    const userId = req.user.id;
+    return this.likeService.unlikePost(userId, postId);
+  }
+
+  @Get('/post/:postId/likes')
+  getAllLikesByPost(@Param('postId', ParseIntPipe) postId: number) {
+    return this.likeService.getAllLikesByPost(postId);
   }
 }

@@ -40,6 +40,8 @@ CLD_API_SECRET=""
   localhost:3000/api/auth/register
 - Update Password : <br>
   localhost:3000/api/auth/updatePassword
+- Get Logged in User : <br>
+  localhost:3000/api/auth/me
 
 <br>
 
@@ -64,6 +66,15 @@ CLD_API_SECRET=""
   localhost:3000/api/comment/:commentId
 - Delete Post : <br>
   localhost:3000/api/comment/:commentId
+
+<br>
+
+- Get All Likes By Post : <br>
+  localhost:3000/api/post/:postId/likes
+- Like Post : <br>
+  localhost:3000/api/post/:postId/like
+- Unlike Post: <br>
+  localhost:3000/api/post/:postId/unlike
 
 <br>
 
